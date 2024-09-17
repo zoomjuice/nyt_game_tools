@@ -9,16 +9,10 @@ def extract_letters(game_data):
     return letters
 
 
-def extract_sides(game_data):
+def generate_disallowed_pairs(game_data):
     sides = [side.lower() for side in game_data['sides']]
-
-    return sides
-
-
-def generate_disallowed_pairs(side_lst):
     all_pairs = []
-
-    for side in side_lst:
+    for side in sides:
         pairs = permutations(side, 2)
         all_pairs.extend(''.join(pair) for pair in pairs)
 
@@ -44,9 +38,39 @@ def load_user_words(word_file):
     return word_list
 
 
-def write_user_wordlist(word_dict, word_file):
+def clean_word_list(word_list, game_data):
+    word_list_unique = []
+
+    for word in word_list:
+        if word in word_list_unique:
+            print(f'Removing "{word}" (duplicate)')
+        else:
+            word_list_unique.append(word)
+
+    alphabet = set('abcdefghijklmnopqrstuvwxyz')
+    allowed_letters = extract_letters(game_data)
+    disallowed_pairs = generate_disallowed_pairs(game_data)
+    disallowed_letters = alphabet - allowed_letters
+    invalid_words = []
+
+    for word in word_list_unique:
+        for pair in disallowed_pairs:
+            if pair in word:
+                invalid_words.append(word)
+                print(f'Removing "{word}" (contains invalid pair "{pair}")')
+        for letter in disallowed_letters:
+            if letter in word:
+                invalid_words.append(word)
+                print(f'Removing "{word}" (contains invalid letter "{letter}")')
+
+    word_list_clean = [word for word in word_list_unique if word not in invalid_words]
+
+    return word_list_clean
+
+
+def write_user_wordlist(word_list, word_file):
     with open(word_file, 'w') as word_file:
-        for word in word_dict.keys():
+        for word in word_list:
             word_file.write(f'{word}\n')
 
 
@@ -92,3 +116,17 @@ def print_solutions(solution_list):
     else:
         for solution in solution_list:
             print('-'.join(solution))
+
+
+def suggest_end_letters(word_list, letter_set):
+    end_letters = {word[-1] for word in word_list}
+    missing_letters = list(letter_set - end_letters)
+    missing_letters.sort()
+    print(f'You have no words ending in the following letters: {', '.join(missing_letters)}')
+
+
+def suggest_beginning_letters(word_list, letter_set):
+    beginning_letters = {word[0] for word in word_list}
+    missing_letters = list(letter_set - beginning_letters)
+    missing_letters.sort()
+    print(f'You have no words beginning with the following letters: {', '.join(missing_letters)}')
