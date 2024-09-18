@@ -34,7 +34,7 @@ def write_game_data_cache(game_data, cache_file):
         os.mkdir(cache_folder)
 
     with open(cache_file, 'w') as data_file:
-        json.dump(game_data, data_file)
+        json.dump(game_data, data_file, indent=4)
     print(f'Game data written to {cache_file}')
 
     return
