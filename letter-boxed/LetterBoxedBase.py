@@ -76,8 +76,8 @@ def write_user_wordlist(word_list, word_file):
         print(f'Wrote {word_file}')
 
 
-def one_word_solve(word_list, letter_set):
-    solution_list = [1]
+def one_word_solve(word_list, letter_set, printable=True):
+    solution_list = [1] if printable else []
     for word in word_list:
         if set(word) == letter_set:
             solution_list.append([word])
@@ -85,8 +85,8 @@ def one_word_solve(word_list, letter_set):
     return solution_list
 
 
-def two_word_solve(word_list, letter_set):
-    solution_list = [2]
+def two_word_solve(word_list, letter_set, printable=True):
+    solution_list = [2] if printable else []
     for word in word_list:
         matches = [w for w in word_list if word[-1] == w[0] and w != word]
         for match in matches:
@@ -96,8 +96,8 @@ def two_word_solve(word_list, letter_set):
     return solution_list
 
 
-def three_word_solve(word_list, letter_set):
-    solution_list = [3]
+def three_word_solve(word_list, letter_set, printable=True):
+    solution_list = [3] if printable else []
     ab = [[a, b] for a in word_list for b in word_list if a[-1] == b[0] and set(a + b) != letter_set]
     for pair in ab:
         pair_str = ''.join(pair)
