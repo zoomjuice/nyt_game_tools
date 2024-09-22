@@ -64,14 +64,16 @@ def clean_word_list(word_list, game_data):
                 print(f'Removing "{word}" (contains invalid letter "{letter}")')
 
     word_list_clean = [word for word in word_list_unique if word not in invalid_words]
+    word_list_clean.sort()
 
     return word_list_clean
 
 
 def write_user_wordlist(word_list, word_file):
-    with open(word_file, 'w') as word_file:
+    with open(word_file, 'w') as w:
         for word in word_list:
-            word_file.write(f'{word}\n')
+            w.write(f'{word}\n')
+        print(f'Wrote {word_file}')
 
 
 def one_word_solve(word_list, letter_set):
